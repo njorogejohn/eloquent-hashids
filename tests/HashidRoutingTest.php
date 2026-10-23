@@ -3,7 +3,6 @@
 namespace Mtvs\EloquentHashids\Tests;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Mtvs\EloquentHashids\Tests\Models\Item;
@@ -11,12 +10,11 @@ use Mtvs\EloquentHashids\Tests\Models\ItemWithCustomRouteKeyName;
 use Mtvs\EloquentHashids\Tests\Models\Comment;
 use Mtvs\EloquentHashids\Tests\Models\Vendor;
 use Vinkla\Hashids\Facades\Hashids;
+use PHPUnit\Framework\Attributes\Test;
 
 class HashidRoutingTest extends TestCase
 {
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_can_resolve_a_route_binding()
 	{
 		$given = factory(Item::class)->create();
@@ -30,7 +28,7 @@ class HashidRoutingTest extends TestCase
 		$this->get("/item/$hashid");
 	}
 
-	/** @test */
+	#[Test]
 	public function it_supports_custom_route_key_names()
 	{
 		$given = ItemWithCustomRouteKeyName::create(
@@ -51,7 +49,7 @@ class HashidRoutingTest extends TestCase
 
 	}
 
-	/** @test */
+	#[Test]
 	public function it_supports_resolving_softdeletable_route_bindings()
 	{
 		$given = factory(Item::class)->state('softDeleted')->create();
@@ -65,7 +63,7 @@ class HashidRoutingTest extends TestCase
 		$this->get("/item/$hashid");
 	}
 
-	/** @test */
+	#[Test]
 	public function it_supports_resolving_child_route_bindings()
 	{
 		$item = factory(Item::class)->create();
@@ -75,7 +73,7 @@ class HashidRoutingTest extends TestCase
 		);
 
 		Route::get(
-			'/item/{item}/comments/{comment}', 
+			'/item/{item}/comments/{comment}',
 			function (Item $item, Comment $comment) use ($given) {
 				$this->assertEquals($given->id, $comment->id);
 			})->scopeBindings()->middleware(SubstituteBindings::class);
@@ -89,7 +87,7 @@ class HashidRoutingTest extends TestCase
 		$this->get("item/{$item->hashid}/comments/{$notRelated->hashid}");
 	}
 
-	/** @test */
+	#[Test]
 	public function it_supports_resolving_special_child_route_bindings()
 	{
 		$vendor = factory(Vendor::class)->create();
@@ -103,17 +101,15 @@ class HashidRoutingTest extends TestCase
 		);
 
 		Route::get(
-			'/vendor/{vendor}/comments/{comment}', 
+			'/vendor/{vendor}/comments/{comment}',
 			function (Vendor $vendor, Comment $comment) use ($given) {
 				$this->assertEquals($given->id, $comment->id);
-			})->scopeBindings()->middleware(SubstituteBindings::class);		
+			})->scopeBindings()->middleware(SubstituteBindings::class);
 
 		$this->get("/vendor/{$vendor->id}/comments/{$given->hashid}");
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_supports_specifying_a_field_in_the_route_binding()
 	{
 		$given = factory(Item::class)->create(['slug' => 'item-1']);
@@ -125,7 +121,7 @@ class HashidRoutingTest extends TestCase
 		$this->get("/item/item-1");
 	}
 
-	/** @test */
+	#[Test]
 	public function it_supports_specifying_the_hashid_in_the_route_binding()
 	{
 		$given = factory(Item::class)->create();
@@ -139,9 +135,7 @@ class HashidRoutingTest extends TestCase
 		$this->get("/item/$hashid");
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_returns_the_hashid_of_the_model_as_its_route_key()
 	{
 		$item = factory(Item::class)->create();

@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mtvs\EloquentHashids\Tests\Models\Item;
 use Vinkla\Hashids\Facades\Hashids;
+use PHPUnit\Framework\Attributes\Test;
 
-class HasHashidTest extends TestCase 
+class HasHashidTest extends TestCase
 {
 	use RefreshDatabase;
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_can_encode_the_model_id_to_its_hashid()
 	{
 		$item = factory(Item::class)->create();
@@ -24,9 +23,7 @@ class HasHashidTest extends TestCase
 		$this->assertEquals($hashid, $item->hashid);
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_can_append_its_hashid_to_its_serialized_version()
 	{
 		$item = factory(Item::class)->create();
@@ -38,9 +35,8 @@ class HasHashidTest extends TestCase
 		$this->assertEquals($hashid, $serialized->hashid);
 	}
 
-	/**
-	 * @test
-	 */
+
+	#[Test]
 	public function it_can_enceode_an_arbitrary_id_to_its_hashid()
 	{
 		$item = new Item();
@@ -48,15 +44,14 @@ class HasHashidTest extends TestCase
 		$hashid = Hashids::encode(123);
 
 		$this->assertEquals($hashid, $item->idToHashid(123));
-	}	
+	}
 
-	/**
-	 * @test
-	 */
+
+	#[Test]
 	public function it_can_find_models_by_hashid()
 	{
 		$item = factory(Item::class)->create();
-		
+
 		$hashid = Hashids::encode($item->getKey());
 
 		$found = Item::findByHashid($hashid);
@@ -65,9 +60,7 @@ class HasHashidTest extends TestCase
 		$this->assertEquals($item->id, $found->id);
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_returns_null_when_cannot_find_a_model_with_a_hashid()
 	{
 		$hashid = Hashids::encode(1);
@@ -77,9 +70,7 @@ class HasHashidTest extends TestCase
 		$this->assertNull($found);
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_can_find_a_model_by_its_hashid_or_fail()
 	{
 		$item = factory(Item::class)->create();
@@ -97,9 +88,7 @@ class HasHashidTest extends TestCase
 		Item::findByHashidOrFail($hashid);
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_can_decode_a_hashid_to_the_id()
 	{
 		$item = factory(Item::class)->create();
@@ -111,9 +100,7 @@ class HasHashidTest extends TestCase
 		$this->assertEquals($item->id, $id);
 	}
 
-	/**
-	 * @test
-	 */
+	#[Test]
 	public function it_can_handle_invalid_hashids_properly()
 	{
 		$this->assertNull((new Item)->hashidToId('not a hashid'));
